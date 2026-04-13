@@ -112,6 +112,7 @@ The system estimates the likely market impact:
 * neutral
 * uncertain
 
+
 ### 6. Signal Generation
 
 A structured event signal is generated containing:
