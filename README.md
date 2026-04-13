@@ -2,17 +2,17 @@
 
 ## Overview
 
-Event-Driven Trading Signal Agent is an agent-based system that analyzes streams of financial news and corporate disclosures to detect events that may influence stock prices and convert them into structured trading signals.
+Event-Driven Trading Signal Agent is an agent-based system that analyzes streams of financial news and corporate disclosures about **companies listed on the Moscow Exchange (MOEX)** to detect events that may influence their stock prices and convert them into structured trading signals.
 
-The system is designed for anyone who needs to quickly identify market-moving events and evaluate their potential impact on traded assets (quantitative researchers, algorithmic trading developers, financial analysts etc.).
+The PoC is scoped to **MOEX-listed Russian equities** (a limited set of large-cap tickers). It is designed for anyone who needs to quickly identify market-moving events in that universe and evaluate their potential impact (quantitative researchers, algorithmic trading developers, financial analysts, and similar roles).
 
-This repository contains a Proof-of-Concept (PoC) implementation demonstrating an end-to-end pipeline: from news ingestion to event detection, signal generation, and post-event evaluation.
+This repository contains a Proof-of-Concept (PoC) implementation demonstrating an end-to-end pipeline: from news ingestion to event detection, signal generation, delivery via **Telegram**, and post-event evaluation against MOEX price data.
 
 ---
 
 # Problem
 
-Financial markets react strongly to **events**, such as:
+The **Russian equity market (MOEX)** reacts strongly to **events**, such as:
 
 * earnings releases
 * dividend announcements
@@ -28,12 +28,12 @@ However, information about these events:
 * may be ambiguous or incomplete
 * requires manual interpretation
 
-Analysts and traders frequently spend significant time scanning news feeds to determine:
+Analysts and traders working on **MOEX names** frequently spend significant time scanning news feeds to determine:
 
-* whether a piece of news relates to a tradable company
+* whether a piece of news relates to a tradable company in their universe
 * whether the event is new or already known
 * how important the event is
-* whether it may affect the price of a particular asset
+* whether it may affect the price of a particular ticker
 
 This manual process leads to:
 
@@ -47,14 +47,14 @@ This manual process leads to:
 
 The goal of this project is to build a **PoC agent-based system** that automatically:
 
-1. collects news from multiple sources
-2. detects events related to public companies
-3. links events to specific stock tickers
+1. collects news from multiple sources relevant to **MOEX-listed companies**
+2. detects events related to those issuers
+3. links events to specific **MOEX tickers**
 4. classifies the type of event
 5. estimates the potential impact on price
 6. generates structured trading signals
 
-The system acts as an **event intelligence layer** between raw news data and trading research workflows.
+The system acts as an **event intelligence layer** between raw news data and trading research workflows focused on the **MOEX** universe.
 
 ---
 
@@ -62,7 +62,7 @@ The system acts as an **event intelligence layer** between raw news data and tra
 
 The primary users of the system include:
 
-* anyone interested who holds stocks
+* analysts and researchers covering **MOEX-listed stocks**
 * quantitative researchers
 * algorithmic trading developers
 * financial analysts
@@ -76,9 +76,13 @@ The system is intended as a **decision-support tool**, not as a fully autonomous
 
 The PoC demonstrates an end-to-end pipeline consisting of the following steps.
 
+### Demo scenario (concrete example)
+
+For a live demo, the team runs the pipeline on a small batch—for example, **five news articles about Sberbank** (including syndicated duplicates from more than one source). The system **deduplicates** the items, **detects one market-relevant corporate event**, maps it to ticker **SBER**, classifies the event type and impact, emits a **structured signal**, and delivers it to a **Telegram** chat as a read-only notification. No trades or other actions are executed.
+
 ### 1. News Ingestion
 
-The system collects news articles and corporate announcements from multiple sources (e.g., RSS feeds or news APIs).
+The system collects news articles and corporate announcements from multiple sources (e.g., RSS feeds or news APIs) focused on Russian financial news and MOEX-relevant issuers.
 
 ### 2. Deduplication
 
@@ -86,7 +90,7 @@ Duplicate news items from different sources are detected and merged.
 
 ### 3. Entity Linking
 
-The system identifies which company or ticker the news refers to.
+The system identifies which company or **MOEX ticker** the news refers to.
 
 ### 4. Event Classification
 
@@ -120,11 +124,11 @@ A structured event signal is generated containing:
 
 ### 7. Alerting
 
-Relevant signals can be delivered via a notification channel (for now Telegram bot).
+Relevant signals are delivered via a **Telegram bot** to a configured chat (see [docs/governance.md](docs/governance.md) for access control). Outputs are **read-only**; the user cannot initiate trades or other side effects through the bot.
 
 ### 8. Post-Event Evaluation
 
-The system evaluates whether the detected event was followed by a meaningful price move.
+The system evaluates whether the detected event was followed by a meaningful price move using **MOEX** market data.
 
 ---
 
@@ -137,9 +141,9 @@ The following features are **explicitly out of scope** for this PoC:
 * high-frequency trading infrastructure
 * ultra-low latency systems
 * large-scale production data pipelines
-* full market coverage
+* **full market coverage** (non-MOEX venues, broad global universes)
 
-The PoC focuses specifically on **event detection and signal generation**, not on building a complete trading system.
+The PoC focuses specifically on **event detection and signal generation** for a **limited MOEX ticker set**, not on building a complete trading system.
 
 ---
 
@@ -168,6 +172,9 @@ An agent-based architecture allows the system to:
 # Repository Structure
 
 ```
+/config
+    feeds.yaml
+
 /docs
     product-proposal.md
     governance.md
@@ -176,7 +183,15 @@ An agent-based architecture allows the system to:
     agents/
     pipelines/
     tools/
+        rss_feeds.py
+        moex_iss.py
+        deepseek_client.py
 
+/tests
+    fixtures/
+    test_rss_fixture.py
+
+requirements.txt
 README.md
 ```
 
@@ -188,13 +203,13 @@ The PoC will likely use the following stack:
 
 * Python
 * LangGraph
-* LLM API
-* News API / RSS feeds
-* Market data API
+* **DeepSeek API** (via **OpenAI-compatible** client — see [docs/product-proposal.md](docs/product-proposal.md) §4.2)
+* **News:** **RSS/Atom feeds** only (allowlisted URLs in `config/feeds.yaml`; no paid news API)
+* **Prices / evaluation:** **MOEX ISS** (public HTTPS API, no key for standard PoC usage)
 * PostgreSQL or lightweight state storage
-* Telegram Bot API for notifications
+* Telegram Bot API for notifications (no API fee)
 
-Probably final stack will include only free technologies
+**Cost profile:** no paid external APIs except **DeepSeek**; RSS, MOEX ISS, and Telegram Bot API are $0 at API level (hosting only).
 
 ---
 

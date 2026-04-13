@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>Fixture feed</title>
+    <link>https://example.com/</link>
+    <item>
+      <title>Сбербанк — дивиденды</title>
+      <link>https://example.com/news/sber-dividends</link>
+      <description>Корпоративное событие для демо PoC.</description>
+      <pubDate>Mon, 01 Apr 2024 12:00:00 GMT</pubDate>
+      <guid>https://example.com/news/sber-dividends</guid>
+    </item>
+  </channel>
+</rss>

@@ -1,0 +1,10 @@
+# Allowlisted RSS/Atom feeds for PoC news ingestion.
+# Enable only feeds you have verified are public and permitted under publisher terms.
+# URLs below are placeholders — replace with real feed endpoints before production use.
+
+feeds:
+  - name: placeholder_finance_feed
+    url: https://example.com/news/rss.xml
+    enabled: false
+  # Example categories to look for when curating (verify live URLs yourself):
+  # - RBC / Interfax / TASS economy or companies sections, if they expose RSS/Atom.
