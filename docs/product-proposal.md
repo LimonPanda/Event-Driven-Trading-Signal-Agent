@@ -348,7 +348,7 @@ Signal Storage
         ↓
 Telegram Bot → allowlisted chat (read-only alerts)
         ↓
-Market Data API (MOEX prices)
+MOEX ISS API (historical prices)
         ↓
 Post-Event Evaluation
 ```

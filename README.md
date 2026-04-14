@@ -82,7 +82,7 @@ For a live demo, the team runs the pipeline on a small batch—for example, **fi
 
 ### 1. News Ingestion
 
-The system collects news articles and corporate announcements from multiple sources (e.g., RSS feeds or news APIs) focused on Russian financial news and MOEX-relevant issuers.
+The system collects news articles and corporate announcements from allowlisted **RSS/Atom feeds** focused on Russian financial news and MOEX-relevant issuers.
 
 ### 2. Deduplication
 
@@ -179,6 +179,9 @@ An agent-based architecture allows the system to:
 /docs
     product-proposal.md
     governance.md
+    system-design.md
+    /diagrams
+    /specs
 
 /src
     agents/
@@ -195,6 +198,27 @@ An agent-based architecture allows the system to:
 requirements.txt
 README.md
 ```
+
+---
+
+# System Design (Milestone 2)
+
+Architecture artifacts for Milestone 2:
+
+- `docs/system-design.md` — source-of-truth architecture document (modules, workflow, state, retrieval, integrations, guardrails, failure/fallback paths).
+- `docs/diagrams/c4-context.md`
+- `docs/diagrams/c4-container.md`
+- `docs/diagrams/c4-component-core.md`
+- `docs/diagrams/workflow-graph.md`
+- `docs/diagrams/data-flow.md`
+- `docs/specs/retriever.md`
+- `docs/specs/tools-apis.md`
+- `docs/specs/memory-context.md`
+- `docs/specs/agent-orchestrator.md`
+- `docs/specs/serving-config.md`
+- `docs/specs/observability-evals.md`
+
+These files define implementation contracts before coding and align with product/governance constraints.
 
 ---
 

@@ -1,0 +1,10 @@
+# Local Python environment and caches
+.venv/
+.pytest_cache/
+__pycache__/
+
+# Private local guidelines (do not commit)
+cursor_code_agent_guidelines.md
+cursor_code_agent_guidelines.txt
+cursor_code_agent_guidelines.md:Zone.Identifier
+cursor_code_agent_guidelines.txt:Zone.Identifier
