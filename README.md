@@ -173,29 +173,58 @@ An agent-based architecture allows the system to:
 # Repository Structure
 
 ```
-/config
-    feeds.yaml
+config/
+    feeds.yaml              # Allowlisted RSS/Atom feed URLs
+    tickers.yaml            # MOEX ticker dictionary with aliases
 
-/docs
+docs/
     product-proposal.md
     governance.md
     system-design.md
-    /diagrams
-    /specs
+    diagrams/               # C4, workflow, data-flow (Mermaid)
+    specs/                  # Module-level technical specs
 
-/src
-    agents/
-    pipelines/
+src/
+    models.py               # Shared data models, enums, error contract
+    config.py               # Centralized config loader (.env)
+    cli.py                  # CLI entrypoint (python -m src.cli)
+    pipeline/
+        orchestrator.py     # Deterministic pipeline coordinator
+        entity_linker.py    # Ticker dictionary + entity resolution
+        dedup.py            # URL + title/date deduplication
+        sanitizer.py        # Prompt injection stripping
+        llm_classify.py     # Event classification (DVF cycle)
+        llm_impact.py       # Impact estimation (DVF cycle)
+        validator.py        # Confidence gate + ticker universe check
+        signal_store.py     # SQLite-backed signal + suppression store
+        telegram_notifier.py # Outbound-only Telegram alerts
+        evaluator.py        # Post-event MOEX ISS price evaluation
     tools/
-        rss_feeds.py
-        moex_iss.py
-        deepseek_client.py
+        rss_feeds.py        # RSS/Atom feed loading and parsing
+        moex_iss.py         # MOEX ISS historical data client
+        deepseek_client.py  # OpenAI-compatible DeepSeek client
 
-/tests
+tests/
     fixtures/
+        minimal_feed.xml    # Minimal RSS fixture
+        sberbank_demo.json  # 5-article Sberbank demo set
+    test_models.py
+    test_entity_linker.py
+    test_dedup.py
+    test_sanitizer.py
+    test_llm_classify.py
+    test_llm_impact.py
+    test_validator.py
+    test_signal_store.py
+    test_telegram_notifier.py
+    test_orchestrator.py
+    test_e2e_demo.py        # Full pipeline e2e on Sberbank fixtures
+    test_config.py
     test_rss_fixture.py
 
+.env.example                # Template for environment variables
 requirements.txt
+pyproject.toml
 README.md
 ```
 
@@ -222,24 +251,48 @@ These files define implementation contracts before coding and align with product
 
 ---
 
-# Planned Technology Stack
+# Technology Stack
 
-The PoC will likely use the following stack:
+* **Python 3.12+**
+* **DeepSeek API** (via OpenAI-compatible client) — the only paid API
+* **RSS/Atom feeds** — public, free news sources
+* **MOEX ISS** — public HTTPS API for historical prices (no key required)
+* **Telegram Bot API** — free, outbound-only signal delivery
+* **SQLite** — lightweight signal/suppression store
+* **pytest** — test suite with mocked LLM calls
 
-* Python
-* LangGraph
-* **DeepSeek API** (via **OpenAI-compatible** client — see [docs/product-proposal.md](docs/product-proposal.md) §4.2)
-* **News:** **RSS/Atom feeds** only (allowlisted URLs in `config/feeds.yaml`; no paid news API)
-* **Prices / evaluation:** **MOEX ISS** (public HTTPS API, no key for standard PoC usage)
-* PostgreSQL or lightweight state storage
-* Telegram Bot API for notifications (no API fee)
+**Cost profile:** $0 except DeepSeek API (< $20/month target).
 
-**Cost profile:** no paid external APIs except **DeepSeek**; RSS, MOEX ISS, and Telegram Bot API are $0 at API level (hosting only).
+---
+
+# Quick Start
+
+```bash
+# 1. Clone and install
+git clone <repo-url> && cd Event-Driven-Trading-Signal-Agent
+pip install -r requirements.txt
+
+# 2. Configure
+cp .env.example .env
+# Edit .env: set DEEPSEEK_API_KEY (required), TELEGRAM_BOT_TOKEN/CHAT_ID (optional)
+
+# 3. Run tests (no API key needed — all LLM calls mocked)
+python -m pytest tests/ -v
+
+# 4. Dry run (ingests feeds, resolves tickers, no LLM calls)
+python -m src.cli --dry-run
+
+# 5. Full pipeline with fixture data
+python -m src.cli --fixture tests/fixtures/sberbank_demo.json
+
+# 6. Full pipeline on live feeds (enable feeds in config/feeds.yaml first)
+python -m src.cli
+```
 
 ---
 
 # Project Status
 
-Current stage: **design / early PoC development**
+Current stage: **Milestone 3 — implementation complete, tests passing**
 
-This repository contains the initial project proposal and system design documentation.
+The full deterministic pipeline is built and tested: ingestion, dedup, entity linking, LLM classification/impact (DVF), validation, SQLite storage, Telegram notification, and MOEX ISS evaluation.

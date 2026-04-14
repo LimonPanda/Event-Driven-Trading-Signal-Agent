@@ -1,10 +1,24 @@
-# Allowlisted RSS/Atom feeds for PoC news ingestion.
-# Enable only feeds you have verified are public and permitted under publisher terms.
-# URLs below are placeholders — replace with real feed endpoints before production use.
+# Allowlisted RSS/Atom feeds for the PoC.
+# Set enabled: true to activate a feed in production runs.
+# All sources are public and free.
 
 feeds:
-  - name: placeholder_finance_feed
-    url: https://example.com/news/rss.xml
+  - url: https://www.rbc.ru/v10/ajax/get-news-feed/navigators/moex/?limit=50
+    name: RBC MOEX section
     enabled: false
-  # Example categories to look for when curating (verify live URLs yourself):
-  # - RBC / Interfax / TASS economy or companies sections, if they expose RSS/Atom.
+
+  - url: https://www.interfax.ru/rss.asp
+    name: Interfax general
+    enabled: false
+
+  - url: https://tass.ru/rss/v2.xml
+    name: TASS main feed
+    enabled: false
+
+  - url: https://www.banki.ru/xml/news.rss
+    name: Banki.ru news
+    enabled: false
+
+  - url: https://lenta.ru/rss/news
+    name: Lenta.ru news
+    enabled: false

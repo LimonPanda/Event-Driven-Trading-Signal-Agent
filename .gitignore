@@ -2,6 +2,17 @@
 .venv/
 .pytest_cache/
 __pycache__/
+*.pyc
+*.egg-info/
+
+# Environment and secrets
+.env
+
+# Runtime data
+data/
+
+# IDE / tooling
+.cursor/
 
 # Private local guidelines (do not commit)
 cursor_code_agent_guidelines.md

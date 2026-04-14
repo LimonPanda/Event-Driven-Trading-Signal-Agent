@@ -1,0 +1,34 @@
+# MOEX ticker dictionary for the PoC universe.
+# aliases: list of strings (Russian, English, informal) that map to the ticker.
+
+tickers:
+  - ticker: SBER
+    company: Sberbank
+    aliases: ["Сбербанк", "Сбер", "Sberbank", "sber"]
+  - ticker: GAZP
+    company: Gazprom
+    aliases: ["Газпром", "Gazprom", "gazp"]
+  - ticker: LKOH
+    company: Lukoil
+    aliases: ["Лукойл", "Lukoil", "lkoh"]
+  - ticker: GMKN
+    company: Norilsk Nickel
+    aliases: ["Норникель", "Норильский никель", "Norilsk Nickel", "gmkn"]
+  - ticker: ROSN
+    company: Rosneft
+    aliases: ["Роснефть", "Rosneft", "rosn"]
+  - ticker: NVTK
+    company: Novatek
+    aliases: ["Новатэк", "Novatek", "nvtk"]
+  - ticker: MTSS
+    company: MTS
+    aliases: ["МТС", "MTS", "mtss"]
+  - ticker: MGNT
+    company: Magnit
+    aliases: ["Магнит", "Magnit", "mgnt"]
+  - ticker: YNDX
+    company: Yandex
+    aliases: ["Яндекс", "Yandex", "yndx"]
+  - ticker: VTBR
+    company: VTB Bank
+    aliases: ["ВТБ", "VTB", "vtbr"]
