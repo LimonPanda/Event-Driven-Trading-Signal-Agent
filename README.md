@@ -291,6 +291,50 @@ python -m src.cli
 
 ---
 
+# Run with Docker
+
+If you don't want to install Python locally, you can run everything in a container. You only need **Docker** and **Docker Compose** installed.
+
+```bash
+# 1. Clone the repo
+git clone <repo-url> && cd Event-Driven-Trading-Signal-Agent
+
+# 2. Configure — create your .env from the template
+cp .env.example .env
+# Edit .env: set DEEPSEEK_API_KEY (required), TELEGRAM_BOT_TOKEN/CHAT_ID (optional)
+
+# 3. Build the image (one-time, ~1 minute)
+docker compose build
+
+# 4. Run commands — same CLI flags as native, just prefixed
+docker compose run --rm agent --dry-run
+docker compose run --rm agent --fixture tests/fixtures/sberbank_demo.json
+docker compose run --rm agent                 # live run
+docker compose run --rm agent -v              # verbose
+
+# 5. Run tests inside the container
+docker compose run --rm --entrypoint pytest agent tests/ -v
+```
+
+### How it works
+
+* **API keys**: your `.env` file stays on the host and is injected into the container at runtime via `env_file` in `docker-compose.yml`. Keys are never baked into the image.
+* **Configs (`config/feeds.yaml`, `config/tickers.yaml`)**: mounted as a volume, so edits take effect on the next run — **no rebuild needed**.
+* **SQLite database (`data/signals.db`)**: persisted on the host via a volume mount, so signals survive between runs.
+* **Rebuild the image** only when you change `requirements.txt` or `src/` code:
+
+  ```bash
+  docker compose build
+  ```
+
+### Inspect the signals database
+
+```bash
+sqlite3 data/signals.db "SELECT ticker, event_type, action, confidence FROM signals ORDER BY created_at DESC LIMIT 20;"
+```
+
+---
+
 # Project Status
 
 Current stage: **Milestone 3 — implementation complete, tests passing**

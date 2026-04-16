@@ -1,0 +1,30 @@
+# Virtual envs / caches
+.venv/
+venv/
+.pytest_cache/
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+
+# Secrets and local runtime data (never bake into image)
+.env
+data/
+
+# Git / IDE / OS
+.git/
+.gitignore
+.cursor/
+.idea/
+.vscode/
+.DS_Store
+
+# Docs not needed at runtime (keeps image small)
+docs/
+README.md
+*.md
+!requirements.txt
+
+# Local-only files
+cursor_code_agent_guidelines*
+*.Zone.Identifier

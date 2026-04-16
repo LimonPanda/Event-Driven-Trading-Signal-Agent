@@ -1,0 +1,12 @@
+services:
+  agent:
+    build: .
+    image: trading-signal-agent:latest
+    container_name: trading-signal-agent
+    env_file:
+      - path: .env
+        required: false
+    volumes:
+      - ./config:/app/config
+      - ./data:/app/data
+      - ./tests/fixtures:/app/tests/fixtures:ro
